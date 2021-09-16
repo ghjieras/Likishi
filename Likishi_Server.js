@@ -10,32 +10,30 @@ var bot = {
   setHeaders: 'X-Line-Signature'
 }
 
-app.post('/callback', (req, res) => {
+app.post('/callback',(req,res) => {
   if (res) {
+    res.send(bot.setHeaders)
     let resData = res.__request.body.toString() // 收到的資料轉換字串
     let ParseData = JSON.parse(resData) // 收到的資料轉換字串解JSON
-    // console.log(ParseData)
-
     const channelSecret = bot.channelSecret // Channel secret string
+    let replyMsg = editMsg(ParseData.events[0].message.text) // 收到的文字訊息做處理
+    const client = new line.Client({
+      channelAccessToken: bot.channelAccessToken
+    });
     const body = 'aa'; // Request body string
     const signature = crypto
       .createHmac('SHA256', channelSecret)
       .update(body).digest('base64');
-
-    let replyMsg = editMsg(ParseData.events[0].message.text) // 收到的文字訊息做處理
-
-    const client = new line.Client({
-      channelAccessToken: bot.channelAccessToken
-    });
-    const message = {
-      type: 'text',
-      text: replyMsg
-    };
-    client.replyMessage(ParseData.events[0].replyToken, message)
-
-
-    return res.send(signature)
-  }
+      const message = {
+        type: 'text',
+        text: replyMsg,
+      };
+      client.replyMessage(ParseData.events[0].replyToken, message).catch((error) => {
+        console.log(error)
+      })
+      return {error:false,signature}
+    }
+    // console.log(replyMsg)
 })
 
 app.listen(3000);

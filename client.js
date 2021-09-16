@@ -10,7 +10,8 @@ var sendData = async function (msg) {
     console.log(msg)
     await axios.get('https://localhost:3000/callback', {
       params: data
-    })
+    }).then((res) => { console.log(res.data) })
+    .catch((error) => {console.error(error)})
   } catch (error) {
     throw new Error(error)
   }
