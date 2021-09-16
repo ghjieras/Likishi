@@ -5,10 +5,12 @@ var data = {
 }
 
 
-var sendData = async function(msg) {
+var sendData = async function (msg) {
   try {
     console.log(msg)
-    await axios.get('http://localhost:3000/webhook', {params: data})
+    await axios.get('https://localhost:3000/callback', {
+      params: data
+    })
   } catch (error) {
     throw new Error(error)
   }
